@@ -41,7 +41,7 @@ namespace apiTasksApp.Controllers
         {
             try
             {
-                Models.Status status = context.status.FirstOrDefault(t => t.id == id);
+                Models.Status status = context.status.FirstOrDefault(t => t.Id == id);
                 return Ok(status);
             }
             catch (Exception ex)
@@ -58,7 +58,7 @@ namespace apiTasksApp.Controllers
             {
                 context.status.Add(status);
                 context.SaveChanges();
-                return CreatedAtRoute("GetStatus", new { status.id }, status);
+                return CreatedAtRoute("GetStatus", new { status.Id }, status);
             }
             catch (Exception ex)
             {
@@ -72,11 +72,11 @@ namespace apiTasksApp.Controllers
         {
             try
             {
-                if (status.id == id)
+                if (status.Id == id)
                 {
                     context.Entry(status).State = EntityState.Modified;
                     context.SaveChanges();
-                    return CreatedAtRoute("GetStatus", new { id = status.id }, status);
+                    return CreatedAtRoute("GetStatus", new { id = status.Id }, status);
                 }
                 else
                 {
@@ -96,7 +96,7 @@ namespace apiTasksApp.Controllers
         {
             try
             {
-                Models.Status status = context.status.FirstOrDefault(t => t.id == id);
+                Models.Status status = context.status.FirstOrDefault(t => t.Id == id);
                 if (status != null)
                 {
                     context.status.Remove(status);

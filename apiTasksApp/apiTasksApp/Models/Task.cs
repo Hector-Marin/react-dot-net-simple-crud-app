@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,11 +10,12 @@ namespace apiTasksApp.Models
     public class Task
     {
         [Key]
-        public int id { get; set; }
-        public string title { get; set; }
-        public string description { get; set; }
-        public byte [] image { get; set; }
-        public string color { get; set; }
-        public int status_fk { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public byte [] Image { get; set; }
+        public string Color { get; set; }
+        public int Status_fk { get; set; }
     }
 }

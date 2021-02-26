@@ -1,9 +1,11 @@
 ﻿using apiTasksApp.Context;
+using apiTasksApp.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,7 +44,7 @@ namespace apiTasksApp.Controllers
         {
             try
             {
-                Models.Task task = context.task.FirstOrDefault(t => t.id == id);
+                Models.Task task = context.task.FirstOrDefault(t => t.Id == id);
                 return Ok(task);
             }
             catch (Exception ex)
@@ -57,10 +59,15 @@ namespace apiTasksApp.Controllers
         {
             try
             {
-                return Ok(task);
+                if(image == null)
+                {
+                    throw new Exception("Task image is required!");
+                }
+
+                task.Image = ImageFunctions.ToBytes(image);
                 context.task.Add(task);
                 context.SaveChanges();
-                return CreatedAtRoute("GetTask", new { task.id }, task);
+                return CreatedAtRoute("GetTask", new { task.Id }, task);
             }
             catch (Exception ex)
             {
@@ -70,15 +77,19 @@ namespace apiTasksApp.Controllers
 
         // PUT api/<TaskController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Models.Task task)
+        public ActionResult Put(int id, [FromForm] Models.Task task, IFormFile image = null)
         {
             try
             {
-                if(task.id == id)
+                Models.Task dbTask; 
+                if ( (dbTask = context.task.Find(id)) != null)
                 {
+                    task.Id = id;
+                    task.Image = (image == null) ? dbTask.Image : ImageFunctions.ToBytes(image);
+                    context.Entry(dbTask).State = EntityState.Detached;
                     context.Entry(task).State = EntityState.Modified;
                     context.SaveChanges();
-                    return CreatedAtRoute("GetTask", new { task.id }, task);
+                    return CreatedAtRoute("GetTask", new { task.Id }, task);
                 }
                 else
                 {
@@ -98,7 +109,7 @@ namespace apiTasksApp.Controllers
         {
             try
             {
-                Models.Task task = context.task.FirstOrDefault(t => t.id == id);
+                Models.Task task = context.task.FirstOrDefault(t => t.Id == id);
                 if(task != null)
                 {
                     context.task.Remove(task);
